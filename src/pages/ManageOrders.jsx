@@ -17,7 +17,7 @@ const ManageOrders = () => {
     const refundModalRef = useRef(null);
 
     // API base URL - adjust according to your setup
-    const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+    const API_BASE_URL = `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api`;
 
     // Fetch orders from backend
     const fetchOrders = async (page = 1, limit = 10) => {
