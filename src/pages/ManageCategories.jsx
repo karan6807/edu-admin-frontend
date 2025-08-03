@@ -30,7 +30,8 @@ const ManageCategories = () => {
   const [sortOrder, setSortOrder] = useState("asc");
 
   // API Base URL - adjust this to your backend URL
-  const API_BASE_URL = "http://localhost:5000/api/admin"; // Change this to your backend URL
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const API_BASE_URL = `${API_URL}/api/admin`; // Change this to your backend URL
 
   // Get auth token from localStorage
   const getAuthToken = () => {
@@ -681,7 +682,7 @@ const ManageCategories = () => {
                   <i className="fas fa-compress me-1"></i>
                   Collapse All
                 </button>
-                
+
               </div>
             </div>
           </div>
@@ -714,8 +715,8 @@ const ManageCategories = () => {
                   <div className="border rounded">
                     <div
                       className={`p-3 d-flex justify-content-between align-items-center ${filterMainCategory === mainCategory._id
-                          ? 'bg-primary text-white'
-                          : 'bg-light'
+                        ? 'bg-primary text-white'
+                        : 'bg-light'
                         }`}
                       style={{ cursor: "pointer" }}
                       onClick={() => toggleMainCategory(mainCategory._id)}
@@ -726,15 +727,15 @@ const ManageCategories = () => {
                             } me-2`}
                         ></i>
                         <span className={`badge me-2 ${filterMainCategory === mainCategory._id
-                            ? 'bg-light text-primary'
-                            : 'bg-primary'
+                          ? 'bg-light text-primary'
+                          : 'bg-primary'
                           }`}>Main</span>
                         <strong>
                           {index + 1}. {mainCategory.name}
                         </strong>
                         <small className={`ms-2 ${filterMainCategory === mainCategory._id
-                            ? 'text-light'
-                            : 'text-muted'
+                          ? 'text-light'
+                          : 'text-muted'
                           }`}>
                           ({getChildrenCount(mainCategory._id)} sub-categories)
                         </small>
@@ -748,8 +749,8 @@ const ManageCategories = () => {
                       <div>
                         <button
                           className={`btn btn-sm me-2 ${filterMainCategory === mainCategory._id
-                              ? 'btn-outline-light'
-                              : 'btn-outline-primary'
+                            ? 'btn-outline-light'
+                            : 'btn-outline-primary'
                             }`}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -760,8 +761,8 @@ const ManageCategories = () => {
                         </button>
                         <button
                           className={`btn btn-sm ${filterMainCategory === mainCategory._id
-                              ? 'btn-outline-light'
-                              : 'btn-outline-danger'
+                            ? 'btn-outline-light'
+                            : 'btn-outline-danger'
                             }`}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -784,21 +785,21 @@ const ManageCategories = () => {
                             <div key={subCategory._id}>
                               <div
                                 className={`p-3 ps-5 d-flex justify-content-between align-items-center border-bottom ${filterSubCategory === subCategory._id
-                                    ? 'bg-info text-white'
-                                    : 'bg-white'
+                                  ? 'bg-info text-white'
+                                  : 'bg-white'
                                   }`}
                                 style={{ cursor: "pointer" }}
                                 onClick={() => toggleSubCategory(subCategory._id)}
                               >
                                 <div className="d-flex align-items-center">
                                   <span className={`badge me-2 ${filterSubCategory === subCategory._id
-                                      ? 'bg-light text-info'
-                                      : 'bg-info'
+                                    ? 'bg-light text-info'
+                                    : 'bg-info'
                                     }`}>Sub</span>
                                   <strong>{subCategory.name}</strong>
                                   <small className={`ms-2 ${filterSubCategory === subCategory._id
-                                      ? 'text-light'
-                                      : 'text-muted'
+                                    ? 'text-light'
+                                    : 'text-muted'
                                     }`}>
                                     ({getChildrenCount(subCategory._id)} sub-sub categories)
                                   </small>
@@ -812,8 +813,8 @@ const ManageCategories = () => {
                                 <div>
                                   <button
                                     className={`btn btn-sm me-2 ${filterSubCategory === subCategory._id
-                                        ? 'btn-outline-light'
-                                        : 'btn-outline-primary'
+                                      ? 'btn-outline-light'
+                                      : 'btn-outline-primary'
                                       }`}
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -824,8 +825,8 @@ const ManageCategories = () => {
                                   </button>
                                   <button
                                     className={`btn btn-sm ${filterSubCategory === subCategory._id
-                                        ? 'btn-outline-light'
-                                        : 'btn-outline-danger'
+                                      ? 'btn-outline-light'
+                                      : 'btn-outline-danger'
                                       }`}
                                     onClick={(e) => {
                                       e.stopPropagation();

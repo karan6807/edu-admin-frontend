@@ -18,6 +18,7 @@ const Instructors = () => {
   });
   const [imagePreview, setImagePreview] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
     fetchInstructors();
@@ -26,7 +27,7 @@ const Instructors = () => {
   const fetchInstructors = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/instructors');
+      const response = await fetch('${API_URL}/api/instructors');
 
       if (!response.ok) {
         throw new Error('Failed to fetch instructors');
@@ -89,7 +90,7 @@ const Instructors = () => {
     formData.append('image', imageFile);
 
     try {
-      const response = await fetch('http://localhost:5000/api/upload', {
+      const response = await fetch('${API_URL}/api/upload', {
         method: 'POST',
         body: formData
       });
@@ -118,7 +119,7 @@ const Instructors = () => {
         profileImageUrl = await uploadImage(formData.profileImage);
       }
 
-      const response = await fetch('http://localhost:5000/api/instructors', {
+      const response = await fetch('${API_URL}/api/instructors', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -161,7 +162,7 @@ const Instructors = () => {
         profileImageUrl = await uploadImage(formData.profileImage);
       }
 
-      const response = await fetch(`http://localhost:5000/api/instructors/${selectedInstructor._id}`, {
+      const response = await fetch(`${API_URL}/api/instructors/${selectedInstructor._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -196,7 +197,7 @@ const Instructors = () => {
   const handleDeleteInstructor = async (id) => {
     if (window.confirm('Are you sure you want to delete this instructor?')) {
       try {
-        const response = await fetch(`http://localhost:5000/api/instructors/${id}`, {
+        const response = await fetch(`${API_URL}/api/instructors/${id}`, {
           method: 'DELETE'
         });
 
@@ -323,7 +324,7 @@ const Instructors = () => {
                         <td>
                           {instructor.profileImage ? (
                             <img
-                              src={`http://localhost:5000${instructor.profileImage}`}
+                              src={`${API_URL}${instructor.profileImage}`}
                               alt={instructor.name}
                               className="rounded-circle"
                               style={{ width: "40px", height: "40px", objectFit: "cover" }}
@@ -542,7 +543,7 @@ const Instructors = () => {
                     <div className="col-md-4 text-center mb-3">
                       {selectedInstructor.profileImage ? (
                         <img
-                          src={`http://localhost:5000${selectedInstructor.profileImage}`}
+                          src={`${API_URL}${selectedInstructor.profileImage}`}
                           alt={selectedInstructor.name}
                           className="rounded-circle shadow"
                           style={{ width: "120px", height: "120px", objectFit: "cover" }}
@@ -706,7 +707,7 @@ const Instructors = () => {
                       {imagePreview && (
                         <div className="mt-3 text-center">
                           <img
-                            src={imagePreview.startsWith('data:') ? imagePreview : `http://localhost:5000${imagePreview}`}
+                            src={imagePreview.startsWith('data:') ? imagePreview : `${API_URL}${imagePreview}`}
                             alt="Preview"
                             className="img-thumbnail"
                             style={{ maxWidth: "200px", maxHeight: "200px" }}

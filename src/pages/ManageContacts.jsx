@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 // Configure axios base URL - change this to match your backend server
-const API_BASE_URL = 'http://localhost:5000'; // Change port if your backend runs on different port
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000'; // Change port if your backend runs on different port
 axios.defaults.baseURL = API_BASE_URL;
 
 const ManageContacts = () => {

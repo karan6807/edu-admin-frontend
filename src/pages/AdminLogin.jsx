@@ -10,9 +10,12 @@ function AdminLogin() {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Create axios instance with base URL
+    // Use environment variable instead of hardcoded localhost
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+    // Create axios instance with dynamic base URL
     const api = axios.create({
-        baseURL: 'http://localhost:5000/api',
+        baseURL: `${API_URL}/api`,
         timeout: 10000, // 10 second timeout
         headers: {
             'Content-Type': 'application/json',

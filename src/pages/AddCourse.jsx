@@ -32,7 +32,10 @@ export default function AddCourse() {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/admin/categories", {
+                // Use environment variable instead of hardcoded localhost
+                const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+                const res = await axios.get(`${API_URL}/api/admin/categories`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
                     },
@@ -52,14 +55,17 @@ export default function AddCourse() {
     useEffect(() => {
         const fetchInstructors = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/instructors');
-                
+                // Use environment variable instead of hardcoded localhost
+                const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+                const response = await fetch(`${API_URL}/api/instructors`);
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch instructors');
                 }
 
                 const data = await response.json();
-                
+
                 if (data.success) {
                     setInstructors(data.data);
                 } else {
@@ -249,9 +255,11 @@ export default function AddCourse() {
             formData.append("learningOutcomes", JSON.stringify(courseData.learningOutcomes.filter(outcome => outcome.trim())));
             formData.append("whatYouWillLearn", JSON.stringify(courseData.whatYouWillLearn.filter(item => item.trim())));
 
+            const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
             const token = localStorage.getItem("adminToken");
             const response = await axios.post(
-                "http://localhost:5000/api/admin/add-course",
+                `${API_URL}/api/admin/add-course`,
                 formData,
                 {
                     headers: {
@@ -601,7 +609,7 @@ export default function AddCourse() {
                                                 {instructors.map((instructor) => (
                                                     <option key={instructor._id} value={instructor._id}>
                                                         {instructor.name} - {instructor.email}
-                                                        {instructor.specializations && instructor.specializations.length > 0 && 
+                                                        {instructor.specializations && instructor.specializations.length > 0 &&
                                                             ` (${instructor.specializations.slice(0, 2).join(', ')})`
                                                         }
                                                     </option>
