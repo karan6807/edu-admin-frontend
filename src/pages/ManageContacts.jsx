@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Configure axios base URL - change this to match your backend server
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000'; // Change port if your backend runs on different port
-axios.defaults.baseURL = API_BASE_URL;
+// Removed global axios.defaults.baseURL to prevent URL corruption
 
 const ManageContacts = () => {
     const [contacts, setContacts] = useState([]);
@@ -81,7 +81,7 @@ const ManageContacts = () => {
                 return;
             }
 
-            const response = await axios.get('/api/contact/admin/all', createAuthenticatedRequest());
+            const response = await axios.get(`${API_BASE_URL}/api/contact/admin/all`, createAuthenticatedRequest());
             setContacts(response.data.contacts || []);
             setError('');
         } catch (error) {
@@ -109,7 +109,7 @@ const ManageContacts = () => {
 
     const updateStatus = async (id, newStatus) => {
         try {
-            await axios.put(`/api/contact/admin/status/${id}`,
+            await axios.put(`${API_BASE_URL}/api/contact/admin/status/${id}`,
                 { status: newStatus },
                 createAuthenticatedRequest()
             );
@@ -141,7 +141,7 @@ const ManageContacts = () => {
         }
 
         try {
-            await axios.delete(`/api/contact/admin/delete/${id}`, createAuthenticatedRequest());
+            await axios.delete(`${API_BASE_URL}/api/contact/admin/delete/${id}`, createAuthenticatedRequest());
             setContacts(contacts.filter(contact => contact._id !== id));
             setShowModal(false);
             setSelectedContact(null);
