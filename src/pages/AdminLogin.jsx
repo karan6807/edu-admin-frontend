@@ -36,7 +36,8 @@ function AdminLogin() {
             const { token, user } = res.data;
 
             // Store token and user info
-            localStorage.setItem("adminToken", token);
+            localStorage.setItem("token", token);
+            localStorage.setItem("adminToken", token); // Keep both for compatibility
             if (user) {
                 localStorage.setItem("adminUser", JSON.stringify(user));
             }

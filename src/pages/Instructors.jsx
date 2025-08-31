@@ -27,7 +27,7 @@ const Instructors = () => {
   const fetchInstructors = async () => {
     try {
       setLoading(true);
-      const response = await fetch('${API_URL}/api/instructors');
+      const response = await fetch(`${API_URL}/instructors`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch instructors');
@@ -90,7 +90,7 @@ const Instructors = () => {
     formData.append('image', imageFile);
 
     try {
-      const response = await fetch('${API_URL}/api/upload', {
+      const response = await fetch(`${API_URL}/upload`, {
         method: 'POST',
         body: formData
       });
@@ -119,7 +119,7 @@ const Instructors = () => {
         profileImageUrl = await uploadImage(formData.profileImage);
       }
 
-      const response = await fetch('${API_URL}/api/instructors', {
+      const response = await fetch(`${API_URL}/instructors`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,7 +162,7 @@ const Instructors = () => {
         profileImageUrl = await uploadImage(formData.profileImage);
       }
 
-      const response = await fetch(`${API_URL}/api/instructors/${selectedInstructor._id}`, {
+      const response = await fetch(`${API_URL}/instructors/${selectedInstructor._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -197,7 +197,7 @@ const Instructors = () => {
   const handleDeleteInstructor = async (id) => {
     if (window.confirm('Are you sure you want to delete this instructor?')) {
       try {
-        const response = await fetch(`${API_URL}/api/instructors/${id}`, {
+        const response = await fetch(`${API_URL}/instructors/${id}`, {
           method: 'DELETE'
         });
 
@@ -324,10 +324,20 @@ const Instructors = () => {
                         <td>
                           {instructor.profileImage ? (
                             <img
-                              src={`${API_URL}${instructor.profileImage}`}
+                              src={(() => {
+                                // Fix malformed URLs
+                                if (instructor.profileImage.includes('cloudinary.com')) {
+                                  return instructor.profileImage;
+                                }
+                                return `${API_URL}${instructor.profileImage}`;
+                              })()}
                               alt={instructor.name}
                               className="rounded-circle"
                               style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'flex';
+                              }}
                             />
                           ) : (
                             <div
@@ -543,10 +553,20 @@ const Instructors = () => {
                     <div className="col-md-4 text-center mb-3">
                       {selectedInstructor.profileImage ? (
                         <img
-                          src={`${API_URL}${selectedInstructor.profileImage}`}
+                          src={(() => {
+                            // Fix malformed URLs
+                            if (selectedInstructor.profileImage.includes('cloudinary.com')) {
+                              return selectedInstructor.profileImage;
+                            }
+                            return `${API_URL}${selectedInstructor.profileImage}`;
+                          })()}
                           alt={selectedInstructor.name}
                           className="rounded-circle shadow"
                           style={{ width: "120px", height: "120px", objectFit: "cover" }}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
                         />
                       ) : (
                         <div

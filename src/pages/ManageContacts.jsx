@@ -44,7 +44,7 @@ const ManageContacts = () => {
 
     // Get authentication token from localStorage
     const getAuthToken = () => {
-        return localStorage.getItem('adminToken');
+        return localStorage.getItem('token') || localStorage.getItem('adminToken');
     };
 
     // Create axios instance with auth headers
@@ -88,6 +88,7 @@ const ManageContacts = () => {
             console.error('Error fetching contacts:', error);
             if (error.response?.status === 401) {
                 setError('Authentication failed. Please login again.');
+                localStorage.removeItem('token');
                 localStorage.removeItem('adminToken');
             } else {
                 setError('Failed to fetch contacts. Please try again.');

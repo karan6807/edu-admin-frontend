@@ -7,33 +7,60 @@ const ManageUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showUserDetail, setShowUserDetail] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-  // Mock data - replace with actual API calls
+  // Fetch real users from API
   useEffect(() => {
-    const mockUsers = [
-      {
-        id: 1,
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@edu.com',
-        department: 'Computer Science',
-        phoneNumber: '+1234567890',
-        enrollmentDate: '2024-01-15',
-        lastLogin: '2024-06-09'
-      },
-      {
-        id: 2,
-        firstName: 'Jane',
-        lastName: 'Smith',
-        email: 'jane.smith@edu.com',
-        department: 'Mathematics',
-        phoneNumber: '+1234567891',
-        enrollmentDate: '2023-08-20',
-        lastLogin: '2024-06-10'
-      }
-    ];
-    setUsers(mockUsers);
+    fetchUsers();
   }, []);
+  
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        setError('No authentication token found. Please login again.');
+        return;
+      }
+      
+      const response = await fetch(`${API_URL}/api/admin/users`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      
+      const data = await response.json();
+      
+      // Transform backend data to match frontend format
+      const transformedUsers = data.users?.map(user => ({
+        id: user._id,
+        firstName: user.username?.split(' ')[0] || user.username || 'Unknown',
+        lastName: user.username?.split(' ')[1] || '',
+        email: user.email,
+        department: user.department || 'Not specified',
+        phoneNumber: user.phone || 'Not provided',
+        enrollmentDate: new Date(user.createdAt).toLocaleDateString(),
+        lastLogin: user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'
+      })) || [];
+      
+      setUsers(transformedUsers);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setError('Failed to fetch users. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredUsers = users.filter(user => {
     return (
@@ -53,9 +80,28 @@ const ManageUsers = () => {
     setSelectedUserId(null);
   };
 
-  const handleDeleteUser = (userId) => {
+  const handleDeleteUser = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
-      setUsers(prev => prev.filter(user => user.id !== userId));
+      try {
+        const token = localStorage.getItem('token');
+        
+        const response = await fetch(`${API_URL}/api/admin/users/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          setUsers(prev => prev.filter(user => user.id !== userId));
+        } else {
+          alert('Failed to delete user. Please try again.');
+        }
+      } catch (err) {
+        console.error('Error deleting user:', err);
+        alert('Error deleting user. Please try again.');
+      }
     }
   };
 
@@ -92,9 +138,31 @@ const ManageUsers = () => {
         </div>
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center py-4">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-2 text-muted">Loading users...</p>
+        </div>
+      )}
+      
+      {/* Error State */}
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          <h4 className="alert-heading">Error!</h4>
+          <p>{error}</p>
+          <button className="btn btn-danger" onClick={fetchUsers}>
+            Retry
+          </button>
+        </div>
+      )}
+      
       {/* Users Table */}
-      <div className="card">
-        <div className="card-body p-0">
+      {!loading && !error && (
+        <div className="card">
+          <div className="card-body p-0">
           <div className="d-none d-lg-block">
             <div className="table-responsive">
               <table className="table table-hover mb-0">
@@ -217,6 +285,7 @@ const ManageUsers = () => {
           </div>
         </div>
       </div>
+      )}
 
       {/* User Detail Modal */}
       {showUserDetail && selectedUserId && (
